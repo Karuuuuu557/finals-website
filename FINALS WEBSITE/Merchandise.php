@@ -46,7 +46,7 @@ if (!$conn) {
         </div>
         <div class="menu">
           <a href="Website.html">🏠 HOME </a>
-          <a class="nav-link" href="Merchandise.html"
+          <a class="nav-link" href="Merchandise.php"
             ><span class="nav-icon">🖥</span> Dashboard</a
           >
           <a class="nav-link active" href="OrderingSystem.php"
