@@ -80,7 +80,7 @@ $conn->close();
     <div class="sidebar-name">Dingdong Khan</div>
     <div class="sidebar-role">Administrator</div>
     <nav class="nav-links">
-      <a class="nav-link" href="Merchandise.html"><span class="nav-icon">🖥</span> Dashboard</a>
+      <a class="nav-link" href="Merchandise.php"><span class="nav-icon">🖥</span> Dashboard</a>
       <a class="nav-link active" href="OrderingSystem.php"><span class="nav-icon">📋</span> Orders</a>
       <a class="nav-link" href="Cashier.php"><span class="nav-icon">📊</span> Sales</a>
       <a class="nav-link" href="Stocks.html"><span class="nav-icon">📦</span> Stocks</a>

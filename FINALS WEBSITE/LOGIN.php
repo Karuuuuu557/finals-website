@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $role = mysqli_fetch_assoc($result);
 
         if($role['roles'] == 'admin'){
-            header('Location: Merchandise.html');
+            header('Location: Merchandise.php');
         }else{
             header('Location: Cashier.php');
         }

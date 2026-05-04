@@ -311,7 +311,7 @@ $addons_json = json_encode($addons_php);
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <a class="nav-item active" href="Merchandise.html"><span class="nav-icon">🖥</span>Dashboard</a>
+    <a class="nav-item active" href="Merchandise.php"><span class="nav-icon">🖥</span>Dashboard</a>
     <a class="nav-item" href="Cashier.php"><span class="nav-icon">📊</span>Sales</a>
     <a class="nav-item" href="Stocks.html"><span class="nav-icon">📦</span>Stocks</a>
     <a class="nav-item" href="Profile.html"><span class="nav-icon">👤</span>Profile</a>
