@@ -3,200 +3,431 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-    <title>FIVESIX. Legaspi Cafe Menu</title>
-    <link rel="stylesheet" href="GlobalStyles.css">
+    <title>Menu — FIVESIX. Legaspi Cafe</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="GlobalStyles.css" />
     <link rel="stylesheet" href="Menu.css" />
   </head>
 
-  <body class="text-gray-800">
-    <header class="w-full py-6 text-center shadow-lg">
-      <h1
-        class="text-4xl sm:text-5xl font-extrabold tracking-tight leading-none"
-      >
-        FIVESIX.
-      </h1>
-      <h2 class="text-3xl sm:text-4xl font-light mt-0">Legaspi Cafe</h2>
-      <p class="text-xs mt-2">SINCE 2021</p>
-    </header>
-    <div class="container mx-auto p-4 sm:p-8 max-w-4xl">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <section
-          class="lg:col-span-2 bg-white rounded-xl p-6 shadow-2xl border border-gray-100"
-        >
-          <h3
-            class="text-2xl font-bold mb-6 pb-2 border-b-2 border-amber-500/50 uppercase tracking-wider"
+  <body>
+    <!-- ── NAV ── -->
+    <nav>
+      <div class="nav-container">
+        <div class="logo">
+          <img src="IMAGES/Logo.png" alt="Fivesix Cafe logo" class="logo-img" />
+          <span class="logo-text">Fivesix Legaspi Cafe</span>
+        </div>
+        <ul class="nav-links">
+          <li><a href="Website.html" id="HomeNav">Home</a></li>
+          <li><a href="Website.html#AboutUs" id="AboutNav">About Us</a></li>
+          <li><a href="Menu.html" id="MenuNav" class="active">Menu</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ── MAIN LAYOUT ── -->
+    <div class="menu-wrapper">
+      <div class="menu-layout">
+        <!-- ── SIDEBAR ── -->
+        <aside class="cat-sidebar">
+          <div class="sidebar-heading">Browse Menu</div>
+
+          <nav class="cat-nav">
+            <button class="cat-btn active" data-cat="all">
+              <span class="cat-icon">☕</span> All Items
+            </button>
+            <button class="cat-btn" data-cat="best-seller">
+              <span class="cat-icon">⭐</span> Best Sellers
+            </button>
+            <button class="cat-btn" data-cat="espresso">
+              <span class="cat-icon">🫘</span> Espresso Based
+            </button>
+            <button class="cat-btn" data-cat="non-caffeine">
+              <span class="cat-icon">🍵</span> Non-Caffeine
+            </button>
+          </nav>
+        </aside>
+
+        <!-- ── CONTENT AREA ── -->
+        <main class="menu-main">
+          <!-- Best Sellers banner (visible only when best-seller filter active) -->
+          <div
+            class="section-banner best-seller-banner"
+            id="banner-best-seller"
+            style="display: none"
           >
-            Espresso Based
-          </h3>
-
-          <div class="space-y-4">
-            <div class="menu-item-selection rounded-lg p-3">
-              <p class="font-semibold text-lg">
-                Americano <span class="price">₱40</span>
-              </p>
-              <p class="text-sm text-gray-500">(Purok)</p>
-            </div>
-
-            <div class="menu-item-selection rounded-lg p-3">
-              <p class="font-semibold text-lg">
-                Iced Coffee Latte <span class="price">₱50</span>
-              </p>
-              <p class="text-sm text-gray-500">(Daga-daga)</p>
-            </div>
-
-            <div class="menu-item-selection rounded-lg p-3">
-              <p class="font-semibold text-lg">
-                Black Coffee <span class="price">₱40</span>
-              </p>
-              <p class="text-sm text-gray-500">(Pabor)</p>
-            </div>
-
-            <div class="menu-item-selection rounded-lg p-3">
-              <p class="font-semibold text-lg">
-                Latte <span class="price">₱50</span>
-              </p>
-              <p class="text-sm text-gray-500">(Bunchek/Iced)</p>
-            </div>
-
-            <div class="menu-item-selection rounded-lg p-3">
-              <p class="font-semibold text-lg">
-                Vietnamese Latte <span class="price">₱50</span>
-              </p>
-              <p class="text-sm text-gray-500">(Ayra)</p>
-            </div>
-
-            <div class="menu-item-selection rounded-lg p-3">
-              <p class="font-semibold text-lg">
-                Caramel Macchiato <span class="price">₱50</span>
-              </p>
-              <p class="text-sm text-gray-500">(Quida-Luna)</p>
-            </div>
-
-            <div class="menu-item-selection rounded-lg p-3">
-              <p class="font-semibold text-lg">
-                Spanish Latte <span class="price">₱50</span>
-              </p>
-              <p class="text-sm text-gray-500">(Garazig)</p>
-            </div>
-
-            <div class="menu-item-selection rounded-lg p-3">
-              <p class="font-semibold text-lg">
-                Horchata Latte <span class="price">₱50</span>
-              </p>
-              <p class="text-sm text-gray-500">(Guggle)</p>
-            </div>
-
-            <div class="menu-item-selection rounded-lg p-3">
-              <p class="font-semibold text-lg">
-                Dirty Matcha <span class="price">₱50</span>
-              </p>
-              <p class="text-sm text-gray-500">(Quamba)</p>
+            <span>⭐</span>
+            <div>
+              <strong>Our Best Sellers</strong>
+              <p>The drinks our customers love most</p>
             </div>
           </div>
-        </section>
 
-        <div class="lg:col-span-1 space-y-8">
-          <section
-            class="bg-white rounded-xl p-6 shadow-2xl border border-gray-100"
-          >
-            <h3
-              class="text-2xl font-bold mb-6 pb-2 border-b-2 border-green-500/50 uppercase tracking-wider"
-            >
-              Non - Caffeine
-            </h3>
-
-            <div class="space-y-4">
-              <div class="menu-item-selection rounded-lg p-3">
-                <p class="font-semibold text-lg">
-                  White Choco <span class="price">₱50</span>
-                </p>
-                <p class="text-sm text-gray-500">(Alice)</p>
+          <!-- ── ESPRESSO BASED ── -->
+          <div class="section-group" id="group-espresso">
+            <div class="section-banner espresso-banner">
+              <span>🫘</span>
+              <div>
+                <strong>Espresso Based</strong>
+                <p>Bold shots, rich flavors, every cup brewed with care</p>
               </div>
-
-              <div class="menu-item-selection rounded-lg p-3">
-                <p class="font-semibold text-lg">
-                  Dark Choco <span class="price">₱50</span>
-                </p>
-                <p class="text-sm text-gray-500">(Guma)</p>
-              </div>
-
-              <div class="menu-item-selection rounded-lg p-3">
-                <p class="font-semibold text-lg">
-                  Matcha Latte <span class="price">₱50</span>
-                </p>
-                <p class="text-sm text-gray-500">(Algra)</p>
-              </div>
-              <div class="menu-item-selection rounded-lg p-3">
-                <p class="font-semibold text-lg">
-                  Fruit Soda <span class="price">₱40</span>
-                </p>
-                <p class="text-sm text-gray-500">(Algra)</p>
-              </div>
-
-              <div class="pt-4 border-t border-gray-200 space-y-4">
-                <div class="menu-item-selection rounded-lg p-3">
-                  <p class="font-semibold text-lg">
-                    Hot Choco <span class="price">₱50</span>
-                  </p>
-                  <p class="text-sm text-gray-500">(Cosa)</p>
+            </div>
+            <div class="products-grid">
+              <div class="product-card" data-cat="espresso">
+                <div class="card-img-wrap no-photo espresso-placeholder">
+                  <span class="placeholder-icon">☕</span>
                 </div>
-                <div class="menu-item-selection rounded-lg p-3">
-                  <p class="font-semibold text-lg">
-                    Hot White Choco <span class="price">₱50</span>
-                  </p>
-                  <p class="text-sm text-gray-500">(Orte)</p>
+                <div class="card-body">
+                  <div class="card-name">Americano</div>
+                  <div class="card-desc">
+                    Bold espresso shots with hot water — clean, strong, and
+                    no-nonsense.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱40</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-card" data-cat="espresso">
+                <div class="card-img-wrap no-photo espresso-placeholder">
+                  <span class="placeholder-icon">🧊</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Iced Coffee Latte</div>
+                  <div class="card-desc">
+                    Smooth espresso over ice with cold creamy milk — easy to
+                    love.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-card" data-cat="espresso">
+                <div class="card-img-wrap no-photo espresso-placeholder dark">
+                  <span class="placeholder-icon">🖤</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Black Coffee</div>
+                  <div class="card-desc">
+                    Pure coffee, nothing else. Simple, honest, and full of
+                    flavor.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱40</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-card" data-cat="espresso">
+                <div class="card-img-wrap no-photo espresso-placeholder">
+                  <span class="placeholder-icon">🥛</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Latte</div>
+                  <div class="card-desc">
+                    Velvety steamed milk balanced with a rich espresso base.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-card" data-cat="espresso">
+                <div class="card-img-wrap no-photo espresso-placeholder warm">
+                  <span class="placeholder-icon">🌿</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Vietnamese Latte</div>
+                  <div class="card-desc">
+                    Sweetened condensed milk meets bold espresso — a rich, icy
+                    classic.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="product-card best-seller"
+                data-cat="espresso best-seller"
+              >
+                <div class="card-img-wrap">
+                  <img src="IMAGES/P3.jpg" alt="Caramel Macchiato" />
+                  <span class="best-seller-badge">⭐ Best Seller</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Caramel Macchiato</div>
+                  <div class="card-desc">
+                    Layers of espresso, milk, and caramel for a smooth, sweet
+                    coffee kick.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-card" data-cat="espresso">
+                <div class="card-img-wrap no-photo espresso-placeholder warm">
+                  <span class="placeholder-icon">🤎</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Spanish Latte</div>
+                  <div class="card-desc">
+                    Bold espresso softened with sweet condensed milk — deeply
+                    satisfying.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="product-card best-seller"
+                data-cat="espresso best-seller"
+              >
+                <div class="card-img-wrap">
+                  <img src="IMAGES/P6.jpg" alt="Horchata Latte" />
+                  <span class="best-seller-badge">⭐ Best Seller</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Horchata Latte</div>
+                  <div class="card-desc">
+                    A creamy cinnamon-spiced latte with a comforting, unique
+                    twist.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-card" data-cat="espresso">
+                <div class="card-img-wrap no-photo matcha-placeholder">
+                  <span class="placeholder-icon">🍵</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Dirty Matcha</div>
+                  <div class="card-desc">
+                    Earthy Japanese matcha meets a bold espresso shot — a
+                    unique, energizing combo.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </section>
+            <!-- /products-grid espresso -->
+          </div>
+          <!-- /section-group espresso -->
 
-          <section
-            class="bg-white rounded-xl p-6 shadow-2xl border border-gray-100"
-          >
-            <h3
-              class="text-2xl font-bold mb-6 pb-2 border-b-2 border-gray-500/50 uppercase tracking-wider"
-            >
-              Add - Ons
-            </h3>
-
-            <div class="space-y-4 text-lg">
-              <div
-                class="menu-item-selection flex justify-between rounded-lg p-2"
-              >
-                <span class="font-medium">SUB OAT MILK</span>
-                <span class="font-bold text-amber-600">30.00</span>
-              </div>
-              <div
-                class="menu-item-selection flex justify-between rounded-lg p-2"
-              >
-                <span class="font-medium">EXTRA SHOT</span>
-                <span class="text-amber-600 font-bold">20.00</span>
-              </div>
-              <div
-                class="menu-item-selection flex justify-between rounded-lg p-2"
-              >
-                <span class="font-medium">EXTRA SYRUP</span>
-                <span class="text-amber-600 font-bold">20.00</span>
+          <!-- ── NON-CAFFEINE ── -->
+          <div class="section-group" id="group-non-caffeine">
+            <div class="section-banner noncaff-banner">
+              <span>🍵</span>
+              <div>
+                <strong>Non-Caffeine</strong>
+                <p>All the comfort, none of the jitters</p>
               </div>
             </div>
-          </section>
-        </div>
+            <div class="products-grid">
+              <div class="product-card" data-cat="non-caffeine">
+                <div class="card-img-wrap no-photo choco-placeholder light">
+                  <span class="placeholder-icon">🤍</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">White Choco</div>
+                  <div class="card-desc">
+                    Sweet, creamy white chocolate blended with silky steamed
+                    milk.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="product-card best-seller"
+                data-cat="non-caffeine best-seller"
+              >
+                <div class="card-img-wrap">
+                  <img src="IMAGES/P7.jpg" alt="Dark Choco" />
+                  <span class="best-seller-badge">⭐ Best Seller</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Dark Choco</div>
+                  <div class="card-desc">
+                    Rich dark chocolate over ice — intensely smooth with a deep
+                    cocoa finish.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-card" data-cat="non-caffeine">
+                <div class="card-img-wrap no-photo matcha-placeholder">
+                  <span class="placeholder-icon">🍵</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Matcha Latte</div>
+                  <div class="card-desc">
+                    Earthy ceremonial-grade matcha whisked with smooth, creamy
+                    milk.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="product-card best-seller"
+                data-cat="non-caffeine best-seller"
+              >
+                <div class="card-img-wrap">
+                  <img src="IMAGES/P2.jpg" alt="Fruit Soda" />
+                  <span class="best-seller-badge">⭐ Best Seller</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Fruit Soda</div>
+                  <div class="card-desc">
+                    Fizzy, colorful, and refreshingly fruity — perfect for
+                    cooling down.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱40</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-card" data-cat="non-caffeine">
+                <div class="card-img-wrap no-photo choco-placeholder">
+                  <span class="placeholder-icon">♨️</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Hot Choco</div>
+                  <div class="card-desc">
+                    A warm, comforting mug of velvety chocolate goodness — like
+                    a hug in a cup.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-card" data-cat="non-caffeine">
+                <div class="card-img-wrap no-photo choco-placeholder light">
+                  <span class="placeholder-icon">☁️</span>
+                </div>
+                <div class="card-body">
+                  <div class="card-name">Hot White Choco</div>
+                  <div class="card-desc">
+                    Warm white chocolate, gently sweet and wonderfully creamy.
+                  </div>
+                  <div class="card-footer">
+                    <span class="card-price">₱50</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /products-grid non-caffeine -->
+          </div>
+          <!-- /section-group non-caffeine -->
+
+          <!-- No results message -->
+          <div class="no-results" id="no-results" style="display: none">
+            No items in this category yet.
+          </div>
+        </main>
       </div>
-      <!-- JOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOSIEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE-->
+      <!-- /menu-layout -->
     </div>
-    <div class="max-w-4xl mx-auto px-4 mt-4">
-      <button
-        onclick="window.location.href = 'Website.html'"
-        class="return-button"
-      >
-        Return
-      </button>
-    </div>
+    <!-- /menu-wrapper -->
 
-    <footer class="w-full bg-black text-white text-center py-6 mt-12 shadow-lg">
-      <p class="text-lg font-medium">@ 56.LEGASPI CAFE</p>
+    <!-- ── FOOTER ── -->
+    <footer class="site-footer">
+      <p>© FiveSix Legaspi Coffee. All Rights Reserved.</p>
     </footer>
+
+    <script
+      src="https://kit.fontawesome.com/1eb91dfeab.js"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      const catBtns = document.querySelectorAll(".cat-btn");
+      const allCards = document.querySelectorAll(".product-card");
+      const espressoGroup = document.getElementById("group-espresso");
+      const noncaffGroup = document.getElementById("group-non-caffeine");
+      const bestSellerBanner = document.getElementById("banner-best-seller");
+      const noResults = document.getElementById("no-results");
+
+      function applyFilter(cat) {
+        // Toggle card visibility
+        let visibleCount = 0;
+        allCards.forEach((card) => {
+          const cats = card.dataset.cat.split(" ");
+          const show = cat === "all" || cats.includes(cat);
+          card.style.display = show ? "" : "none";
+          if (show) visibleCount++;
+        });
+
+        // Show/hide section groups
+        if (cat === "all") {
+          espressoGroup.style.display = "";
+          noncaffGroup.style.display = "";
+          bestSellerBanner.style.display = "none";
+        } else if (cat === "best-seller") {
+          espressoGroup.querySelector(".section-banner").style.display = "none";
+          noncaffGroup.querySelector(".section-banner").style.display = "none";
+          bestSellerBanner.style.display = "flex";
+
+          // Show both groups but hide their banners so cards still layout properly
+          espressoGroup.style.display = "";
+          noncaffGroup.style.display = "";
+        } else if (cat === "espresso") {
+          espressoGroup.style.display = "";
+          noncaffGroup.style.display = "none";
+          bestSellerBanner.style.display = "none";
+          espressoGroup.querySelector(".section-banner").style.display = "flex";
+        } else if (cat === "non-caffeine") {
+          espressoGroup.style.display = "none";
+          noncaffGroup.style.display = "";
+          bestSellerBanner.style.display = "none";
+          noncaffGroup.querySelector(".section-banner").style.display = "flex";
+        }
+
+        // Restore banners when switching away from best-seller
+        if (cat !== "best-seller") {
+          espressoGroup.querySelector(".section-banner").style.display = "flex";
+          noncaffGroup.querySelector(".section-banner").style.display = "flex";
+        }
+
+        noResults.style.display = visibleCount === 0 ? "block" : "none";
+      }
+
+      catBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          catBtns.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          applyFilter(btn.dataset.cat);
+        });
+      });
+    </script>
   </body>
 </html>
