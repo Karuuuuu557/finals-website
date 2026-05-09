@@ -1,0 +1,129 @@
+@import url("GlobalStyles.css");
+
+/* PAGE BACKGROUND */
+body {
+  background: var(--primary-cream-light);
+  padding: 20px;
+}
+
+/* ━━━ NAVIGATION BAR ━━━ */
+nav {
+  background: var(--primary-cream);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+nav a {
+  margin-right: 20px;
+  text-decoration: none;
+  color: var(--text-dark);
+  font-weight: 500;
+}
+
+nav a.active {
+  color: var(--primary-brown);
+}
+
+/* ━━━ FILTER BUTTONS ━━━ */
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  border: 1px solid var(--border-light);
+  border-radius: 20px;
+  background: var(--card-bg);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.filter-btn:hover {
+  border-color: var(--primary-brown);
+}
+
+.filter-btn.active {
+  background: var(--primary-brown);
+  color: var(--primary-cream-light);
+  border-color: var(--primary-brown);
+}
+
+/* ━━━ PRODUCT GRID ━━━ */
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* ━━━ PRODUCT CARD ━━━ */
+.product-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow-light);
+  transition: transform 0.2s;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+/* Product Image */
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Product Information */
+.product-info {
+  padding: 15px;
+}
+
+.product-name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+}
+
+.product-desc {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.product-price {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-brown);
+}
+
+/* ━━━ CATEGORY TITLE ━━━ */
+.category-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 30px 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--primary-brown);
+  color: var(--text-dark);
+}
+
+/* ━━━ UTILITY CLASS ━━━ */
+.hidden {
+  display: none;
+}
+
+/* ━━━ FOOTER ━━━ */
+footer {
+  text-align: center;
+  margin-top: 50px;
+  padding: 20px;
+  color: var(--text-muted);
+}
