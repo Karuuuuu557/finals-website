@@ -1,5 +1,13 @@
 @import url("GlobalStyles.css");
 
+:root {
+  --card: var(--card-bg);
+  --muted: var(--text-muted);
+  --accent: var(--primary-brown);
+  --danger: #c0392b;
+  --glass: rgba(140, 92, 56, 0.1);
+}
+
 body {
   margin: 0;
   font-family: var(--font-primary);
@@ -53,6 +61,11 @@ body {
   background: var(--glass);
 }
 
+.menu a.active {
+  background: var(--primary-brown);
+  color: var(--primary-cream-light);
+}
+
 /*TOPBAR*/
 header.topbar {
   grid-column: 2;
@@ -99,7 +112,7 @@ main {
 .card {
   background: var(--card);
   padding: 18px;
-  -radius: 12px;
+  border-radius: 12px;
   box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
   transition:
     transform 0.25s ease,

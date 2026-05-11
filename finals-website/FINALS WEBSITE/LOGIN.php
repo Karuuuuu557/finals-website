@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 $host = "mysql-1d69cd83-umak-e978.i.aivencloud.com";
 $port = 19494;
 $dbname = "login_credentials";
@@ -21,6 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (mysqli_num_rows($result) > 0) {
         $role = mysqli_fetch_assoc($result);
+
+        $_SESSION['username'] = $role['username'];  // Store the actual username from database
 
         if($role['roles'] == 'admin'){
             header('Location: Merchandise.php');

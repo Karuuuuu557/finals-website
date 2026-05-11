@@ -69,6 +69,7 @@ $conn->close();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FiveSix Legazpi Cafe — Orders</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
   <link href="OrderingSystem.css" rel="stylesheet">
 </head>
 
@@ -84,7 +85,7 @@ $conn->close();
       <a class="nav-link active" href="OrderingSystem.php"><span class="nav-icon">📋</span> Orders</a>
       <a class="nav-link" href="Cashier.php"><span class="nav-icon">📊</span> Sales</a>
       <a class="nav-link" href="Stocks.php"><span class="nav-icon">📦</span> Stocks</a>
-      <a class="nav-link" href="Profile.html"><span class="nav-icon">👤</span> Profile</a>
+      <a class="nav-link" href="Profile.php"><span class="nav-icon">👤</span> Profile</a>
     </nav>
     <div class="sidebar-spacer"></div>
     <a class="logout-btn" href="LOGIN.php">Log out ➜</a>

@@ -11,9 +11,84 @@ if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
 } 
 
-$query = "SELECT product_id, product_name, variant, category, price, emoji, stock, threshold FROM products WHERE is_active = 1 ORDER BY product_name ASC";
+$query = "SELECT ingredient_id, ingredient_name, category, unit_of_measure AS units, current_quantity AS qty FROM ingredients WHERE is_active = 1";
 $result = mysqli_query($conn, $query);
 
+//wag remove comments muna sa part sa baba
+// ===== FETCH DAILY DATA FOR CHART =====
+// ===== FETCH DAILY DATA FOR CHART =====
+$dailyQuery = "
+    SELECT 
+        DATE(created_at) as date,
+        DATE_FORMAT(created_at, '%Y-%m-%d') as day_label,
+        COUNT(*) as total_transactions,
+        COALESCE(SUM(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(detail, 'Cash:', 1),'Total: ₱',-1) AS DECIMAL(10,2))), 0) as total_revenue
+    FROM activity_logs
+    WHERE type = 'sale'
+    GROUP BY DATE(created_at), DATE_FORMAT(created_at, '%Y-%m-%d')
+    ORDER BY DATE(created_at) DESC
+    LIMIT 30
+";
+$dailyResult = mysqli_query($conn, $dailyQuery);
+
+$dailyLabels = [];
+$dailyRevenue = [];
+$dailyTransactions = [];
+
+if ($dailyResult && mysqli_num_rows($dailyResult) > 0) {
+    while ($row = mysqli_fetch_assoc($dailyResult)) {
+        $dailyLabels[] = $row['day_label'];
+        $dailyRevenue[] = (float)($row['total_revenue'] ?? 0);
+        $dailyTransactions[] = (int)$row['total_transactions'];
+    }
+    // Reverse to show oldest first
+    $dailyLabels = array_reverse($dailyLabels);
+    $dailyRevenue = array_reverse($dailyRevenue);
+    $dailyTransactions = array_reverse($dailyTransactions);
+}
+
+// ===== FETCH MONTHLY DATA FOR CHART =====
+// ===== FETCH MONTHLY DATA FOR CHART =====
+$monthlyQuery = "
+    SELECT 
+        DATE_FORMAT(created_at, '%b %Y') as month_label,
+        YEAR(created_at) as year,
+        MONTH(created_at) as month,
+        COUNT(*) as total_transactions,
+        COALESCE(SUM(CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(detail, 'Cash:', 1),'Total: ₱',-1) AS DECIMAL(10,2))), 0) as total_revenue
+    FROM activity_logs
+    WHERE type = 'sale'
+    GROUP BY YEAR(created_at), MONTH(created_at), DATE_FORMAT(created_at, '%b %Y')
+    ORDER BY YEAR(created_at) ASC, MONTH(created_at) ASC
+";
+$monthlyResult = mysqli_query($conn, $monthlyQuery);
+
+$monthlyLabels = [];
+$monthlyRevenue = [];
+$monthlyTransactions = [];
+
+if ($monthlyResult && mysqli_num_rows($monthlyResult) > 0) {
+    while ($row = mysqli_fetch_assoc($monthlyResult)) {
+        $monthlyLabels[] = $row['month_label'];
+        $monthlyRevenue[] = (float)($row['total_revenue'] ?? 0);
+        $monthlyTransactions[] = (int)$row['total_transactions'];
+    }
+}
+
+// Convert to JSON for JavaScript
+$dailyChartJSON = json_encode([
+    'labels' => $dailyLabels,
+    'revenue' => $dailyRevenue,
+    'transactions' => $dailyTransactions
+]);
+
+$monthlyChartJSON = json_encode([
+    'labels' => $monthlyLabels,
+    'revenue' => $monthlyRevenue,
+    'transactions' => $monthlyTransactions
+]);
+
+mysqli_close($conn);
 ?>
 
 <!doctype html>
@@ -28,6 +103,12 @@ $result = mysqli_query($conn, $query);
     />
     <link rel="stylesheet" href="GlobalStyles.css" />
     <link rel="stylesheet" href="Merchandise.css" />
+    <script>
+      // Clear any Chart.js cache
+      if (window.Chart) {
+        delete window.Chart;
+      }
+    </script>
   </head>
 
   <body data-theme="light">
@@ -48,10 +129,10 @@ $result = mysqli_query($conn, $query);
         </div>
         <div class="menu">
           <a href="Website.html">🏠 Home </a>
-          <a class="nav-link" href="Merchandise.php"
+          <a class="nav-link active" href="Merchandise.php"
             ><span class="nav-icon">🖥</span> Dashboard</a
           >
-          <a class="nav-link active" href="OrderingSystem.php"
+          <a class="nav-link" href="OrderingSystem.php"
             ><span class="nav-icon">📋</span> Orders</a
           >
           <a class="nav-link" href="Cashier.php"
@@ -60,7 +141,7 @@ $result = mysqli_query($conn, $query);
           <a class="nav-link" href="Stocks.php"
             ><span class="nav-icon">📦</span> Stocks</a
           >
-          <a class="nav-link" href="Profile.html"
+          <a class="nav-link" href="Profile.php"
             ><span class="nav-icon">👤</span> Profile</a
           >
         </div>
@@ -129,14 +210,34 @@ $result = mysqli_query($conn, $query);
           </section>
 
           <section class="two-col">
-            <div class="card fade-in" style="min-height: 260px">
-              <h3 style="margin: 0 0 12px 0">Sales vs Purchases</h3>
-              
-        <div class = "card fade-in" style="min-height: 260px">
-            <canvas id="myChart"></canvas>
-        </div>
+          <div class="card fade-in" style="min-height: 260px">
+            <h3 style="margin: 0 0 12px 0">Sales Analytics</h3>
+            
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <button class="btn" onclick="toggleView('daily')" id="btnDaily">📅 Daily (30 Days)</button>
+              <button class="btn" onclick="toggleView('monthly')" id="btnMonthly">📊 Monthly (12 Months)</button>
+            </div>
+            
+            <div style="position: relative; height: 300px;">
+              <canvas id="myChart"></canvas>
+            </div>
+            
+            <div style="margin-top: 12px; display: flex; gap: 12px; align-items: center;">
+              <button class="btn" onclick="openReport()">View Report</button>
+              <div style="color: var(--muted); font-size: 13px">
+                Toggle between daily and monthly views
+              </div>
+            </div>
+         </div>
+
+        
+
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="script.js"></script>
+        <script>
+          window.dailyData = <?php echo $dailyChartJSON; ?>;
+          window.monthlyData = <?php echo $monthlyChartJSON; ?>;
+        </script>
+        <script src="script2.js"></script>
         <div id="reportModal" style="
       display: none;
       position: fixed;
@@ -188,20 +289,8 @@ $result = mysqli_query($conn, $query);
         </table>
       </div>
     </div>
-              <div
-                style="
-                  margin-top: 12px;
-                  display: flex;
-                  gap: 12px;
-                  align-items: center;
-                "
-              >
-                <button class="btn" onclick="openReport()">View Report</button>
-                <div style="color: var(--muted); font-size: 13px">
-                  Compare: This month vs Last month
-                </div>
-              </div>
-            </div>
+             
+      </div>
 
             <aside class="card fade-in">
               <h3 style="margin: 0 0 12px 0">Alerts & Inventory Health</h3>
@@ -243,8 +332,8 @@ $result = mysqli_query($conn, $query);
                 <thead>
                   <tr>
                     <th>Product Name</th>
+                    <th>Category</th>
                     <th>Remaining</th>
-                    <th>Price</th>
                   </tr>
                 </thead>
                 <tbody id="productsTable">
@@ -252,19 +341,16 @@ $result = mysqli_query($conn, $query);
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
                         <tr class="product-row" style="border-bottom: solid rgb(114, 110, 110)">
                           <td style="display: flex; gap: 10px; align-items: center">
-                            <div style="font-size: 20px"><?= htmlspecialchars($row['emoji']) ?></div>
-                            <div>
-                              <strong><?= htmlspecialchars($row['product_name']) ?></strong>
-                              <div style="font-size: 12px; color: var(--muted)">
-                                <?= htmlspecialchars($row['variant']) ?> · <?= htmlspecialchars($row['category']) ?>
-                              </div>
-                            </div>
+                              <strong><?= htmlspecialchars($row['ingredient_name']) ?></strong>
                           </td>
-              
                           <td>
-                            <span class="count"><?= (int)$row['stock'] ?></span>
+                            <strong>
+                                 <?= htmlspecialchars($row['category']) ?>
+                            </strong>
                           </td>
-                          <td>₱<?= number_format($row['price'], 2) ?></td>
+                          <td>
+                            <strong><span class="count"><?= (int)$row['qty'], $row['units'] ?></span></strong>
+                          </td>
                         </tr>
                       <?php endwhile; ?>
                     <?php else: ?>
@@ -376,17 +462,22 @@ $result = mysqli_query($conn, $query);
           // Decide badge text and color
           let badgeText = "";
           let badgeClass = "";
+          
 
-          if (remaining <= 10) {
-            badgeText = "CRITICAL";
-            badgeClass = "critical";
-          } else if (remaining <= 20) {
-            badgeText = "LOW";
-            badgeClass = "low";
-          } else {
-            badgeText = "OK";
-            badgeClass = "ok";
-          }
+        
+        
+
+            if (remaining <= 10) {
+              badgeText = "CRITICAL";
+              badgeClass = "critical";
+            } else if (remaining <= 20) {
+              badgeText = "LOW";
+              badgeClass = "low";
+            } else {
+              badgeText = "OK";
+              badgeClass = "ok";
+            }
+          
 
           // Create alert element
           const alertDiv = document.createElement("div");

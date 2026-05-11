@@ -5,12 +5,32 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
   $action = $_POST['action'] ?? '';
 
   if ($action === 'restock') {
+
+    header('Content-Type: application/json');
+
     $id  = intval($_POST['id']);
     $qty = floatval($_POST['qty']);
-    $result = $conn->query("UPDATE ingredients SET current_quantity = current_quantity + $qty WHERE ingredient_id = $id");
-    echo json_encode(['success' => (bool)$result]);
+
+    $query = "UPDATE ingredients 
+              SET current_quantity = current_quantity + $qty 
+              WHERE ingredient_id = $id";
+
+    $result = $conn->query($query);
+
+    if (!$result) {
+        echo json_encode([
+            'success' => false,
+            'error' => $conn->error,
+            'query' => $query
+        ]);
+        exit;
+    }
+
+    echo json_encode([
+        'success' => true
+    ]);
     exit;
-  }
+}
  
   if ($action === 'reduce') {
     $id  = intval($_POST['id']);

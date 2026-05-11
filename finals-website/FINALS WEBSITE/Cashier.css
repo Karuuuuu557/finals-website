@@ -421,6 +421,18 @@ header {
   font-weight: 700;
   font-size: 15px;
 }
+.order-count {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--accent);
+}
 .clear-all-btn {
   font-size: 11.5px;
   color: var(--red);
@@ -1039,6 +1051,183 @@ header {
 .empty-order .empty-icon {
   font-size: 38px;
   opacity: 0.4;
+}
+
+/*Receipt Modal*/
+
+/* PANEL TABS */
+.panel-tabs {
+  display: flex;
+  border-bottom: 1.5px solid var(--border);
+  flex-shrink: 0;
+}
+.panel-tab {
+  flex: 1;
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--muted);
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  background: none;
+  font-family: "DM Sans", sans-serif;
+  transition: 0.18s;
+}
+.panel-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* PANEL VIEWS */
+.panel-view {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+.panel-view.active {
+  display: flex;
+}
+
+/* RECEIPT VIEW */
+.receipt-view {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 8px 6px;
+  background: #ede8e3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.receipt-paper {
+  background: #ffffff;
+  width: 210px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 10.5px;
+  line-height: 1.5;
+  padding: 12px 11px;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+.receipt-paper::before {
+  content: "";
+  display: block;
+  height: 7px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ede8e3 0,
+    #ede8e3 5px,
+    #fff 5px,
+    #fff 11px
+  );
+  margin: -12px -11px 10px;
+}
+.receipt-paper::after {
+  content: "";
+  display: block;
+  height: 7px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ede8e3 0,
+    #ede8e3 5px,
+    #fff 5px,
+    #fff 11px
+  );
+  margin: 10px -11px -12px;
+}
+.r-center {
+  text-align: center;
+}
+.r-bold {
+  font-weight: bold;
+}
+.r-line {
+  border-top: 1px dashed #bbb;
+  margin: 5px 0;
+}
+.r-dline {
+  border-top: 2px solid #444;
+  margin: 5px 0;
+}
+.r-row {
+  display: flex;
+  justify-content: space-between;
+}
+.r-rowtotal {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 12px;
+}
+.r-indent {
+  padding-left: 8px;
+  color: #666;
+  font-size: 10px;
+}
+.r-muted {
+  color: #999;
+  font-size: 10px;
+}
+.r-empty {
+  text-align: center;
+  color: #bbb;
+  padding: 28px 0;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.receipt-print-btn {
+  width: 100%;
+  margin-top: 9px;
+  padding: 9px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.18s;
+}
+.receipt-print-btn:hover {
+  background: var(--accent-hover);
+}
+
+/* VAT ROW */
+.sum-row.vat-row {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media print {
+  @page {
+    size: 58mm auto;
+    margin: 0;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .receipt-paper,
+  .receipt-paper * {
+    visibility: visible;
+  }
+  .receipt-paper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 58mm;
+    box-shadow: none;
+    padding: 8px;
+  }
+  .receipt-paper::before,
+  .receipt-paper::after {
+    display: none;
+  }
+  .receipt-print-btn {
+    display: none !important;
+  }
 }
 
 /* SUCCESS TOAST */
