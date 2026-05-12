@@ -6,7 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
 
   if ($action === 'restock') {
 
-    header('Content-Type: application/json');
+    
 
     $id  = intval($_POST['id']);
     $qty = floatval($_POST['qty']);
@@ -17,18 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === 'POST') {
 
     $result = $conn->query($query);
 
-    if (!$result) {
-        echo json_encode([
-            'success' => false,
-            'error' => $conn->error,
-            'query' => $query
-        ]);
-        exit;
-    }
-
-    echo json_encode([
-        'success' => true
-    ]);
+    echo json_encode(['success' => true]);
     exit;
 }
  
@@ -101,7 +90,7 @@ $ingredients_json = json_encode($ingredients_php);
       <a class="nav-link" href="OrderingSystem.php"><span class="nav-icon">📋</span> Orders</a>
       <a class="nav-link" href="Cashier.php"><span class="nav-icon">📊</span> Sales</a>
       <a class="nav-link active" href="Stocks.php"><span class="nav-icon">📦</span> Stocks</a>
-      <a class="nav-link" href="Profile.html"><span class="nav-icon">👤</span> Profile</a>
+      <a class="nav-link" href="Profile.php"><span class="nav-icon">👤</span> Profile</a>
     </nav>
     <div class="sidebar-spacer"></div>
     <button class="logout-btn" href="LOGIN.php" showToast('Logged out!')">Log out ➜</button>

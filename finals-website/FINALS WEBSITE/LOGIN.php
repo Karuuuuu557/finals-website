@@ -18,9 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $pass = $_POST['password'];
 
-    $query = "SELECT * FROM customer_credentials WHERE (email='$email' OR username = '$email') AND password='$pass'";
+    $query = "SELECT * FROM employee_credentials WHERE (email='$email' OR username = '$email') AND password='$pass'";
     $result = mysqli_query($conn, $query);
-
+    
     if (mysqli_num_rows($result) > 0) {
         $role = mysqli_fetch_assoc($result);
 

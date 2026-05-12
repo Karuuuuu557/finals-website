@@ -22,7 +22,7 @@ if (!$login_conn) {
 }
 
 $username = $_SESSION['username'];
-$query = "SELECT email, username, roles FROM customer_credentials WHERE username = ?";
+$query = "SELECT email, username, roles FROM employee_credentials WHERE username = ?";
 $stmt = $login_conn->prepare($query);
 $stmt->bind_param("s", $username);
 $stmt->execute();

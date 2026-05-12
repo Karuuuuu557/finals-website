@@ -354,7 +354,7 @@ mysqli_close($conn);
                         </tr>
                       <?php endwhile; ?>
                     <?php else: ?>
-                      <tr><td colspan="4" style="text-align:center; color:var(--muted)">No products found.</td></tr>
+                      <tr><td colspan="3" style="text-align:center; color:var(--muted)">No products found.</td></tr>
                     <?php endif; ?>
                   </tbody>
               </table>
@@ -392,8 +392,8 @@ mysqli_close($conn);
           let rows = Array.from(tableBody.querySelectorAll(".product-row"));
 
           rows.sort((a, b) => {
-            const soldA = parseInt(a.children[1].textContent.trim());
-            const soldB = parseInt(b.children[1].textContent.trim());
+            const soldA = parseInt(a.querySelector(".count").textContent.trim(), 10) || 0;
+            const soldB = parseInt(b.querySelector(".count").textContent.trim(), 10) || 0;
 
             if (sortSoldAsc) {
               return soldA - soldB; // Low → High
@@ -502,10 +502,7 @@ mysqli_close($conn);
           const productName = row
             .querySelector("td strong")
             .textContent.toLowerCase();
-          const productCategoryDiv = row.querySelector("td strong + div"); // category under product name
-          const productCategory = productCategoryDiv
-            ? productCategoryDiv.textContent.toLowerCase()
-            : "";
+          const productCategory = row.children[1].textContent.toLowerCase();
 
           if (productName.includes(query) || productCategory.includes(query)) {
             row.style.display = "";

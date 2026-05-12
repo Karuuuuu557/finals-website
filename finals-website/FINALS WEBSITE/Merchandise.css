@@ -22,7 +22,7 @@ body {
   border-radius: 10px;
 }
 
-/*LAYOT*/
+/*LAYOUT*/
 .app {
   display: grid;
   grid-template-columns: 240px 1fr;

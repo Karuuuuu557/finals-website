@@ -31,7 +31,7 @@ if (!$conn) {
 
 // Get logged-in user's data
 $username = $_SESSION['username'];
-$query = "SELECT email, username, roles, datejoined FROM customer_credentials WHERE username = ? OR email = ?";
+$query = "SELECT email, username, roles, datejoined FROM employee_credentials WHERE username = ? OR email = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("ss", $username, $username);
 $stmt->execute();
