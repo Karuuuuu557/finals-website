@@ -1,36 +1,43 @@
 <?php
-$host = "mysql-1d69cd83-umak-e978.i.aivencloud.com";
-$port = 19494;
-$dbname = "login_credentials";
-$username = "avnadmin";
-$password = "AVNS_vZ6RVEWU-0a2Jwp-Zzz";
+session_start();
+require_once __DIR__ . '/db.php';
 
-$conn = mysqli_connect($host, $username, $password, $dbname, $port);
-
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
+$conn = connect_login_db();
 $error = "";
     
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $pass = $_POST['password'];
 
-    $query = "SELECT * FROM customer_credentials WHERE (email='$email' OR username = '$email') AND password='$pass'";
-    $result = mysqli_query($conn, $query);
+    // Use prepared statements to prevent SQL injection (delete this if error)
+    $stmt = mysqli_prepare($conn, "SELECT * FROM employee_credentials WHERE (email = ? OR username = ?)");
+    mysqli_stmt_bind_param($stmt, "ss", $email, $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-    if (mysqli_num_rows($result) > 0) {
-        $role = mysqli_fetch_assoc($result);
+    /*
+    $query = "SELECT * FROM employee_credentials WHERE (email='$email' OR username = '$email') AND password='$pass'";
+    $result = mysqli_query($conn, $query); 
+    */
+    
+    if ($row = mysqli_fetch_assoc($result)) {
+        // Compare password (use password_verify if hashed, direct compare if plain)
+        if ($row['password'] === $pass) {
+            $_SESSION['logged_in'] = true;
+            $_SESSION['username']  = $row['username'];
+            $_SESSION['email']     = $row['email'];
+            $_SESSION['role']      = $row['roles'];  // ← store role in session
 
-        if($role['roles'] == 'admin'){
-            header('Location: Merchandise.php');
-        }else{
-            header('Location: Cashier.php');
+            if ($row['roles'] === 'admin') {
+                header('Location: Merchandise.php');
+            } else {
+                header('Location: Cashier.php');
+            }
+            exit();
         }
-        exit();
-    } else {
-        $error = "Incorrect email or password!";
     }
+
+    $error = "Incorrect email or password!";
 }
 ?>
 
@@ -81,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </div>
 
                     <?php if ($error): ?>
-                        <p style="color:red;"><?= $error ?></p>
+                        <p class="login-error"><?= htmlspecialchars($error) ?></p>
                     <?php endif; ?>
                     <button type="submit" class="login-btn">LOGIN</button>
                 </form>

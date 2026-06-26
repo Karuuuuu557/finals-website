@@ -37,14 +37,8 @@
           <div class="sidebar-heading">Browse Menu</div>
 
           <nav class="cat-nav">
-            <button class="cat-btn active" data-cat="all">
-              <span class="cat-icon">☕</span> All Items
-            </button>
-            <button class="cat-btn" data-cat="best-seller">
-              <span class="cat-icon">⭐</span> Best Sellers
-            </button>
-            <button class="cat-btn" data-cat="espresso">
-              <span class="cat-icon">🫘</span> Espresso Based
+            <button class="cat-btn active" data-cat="espresso">
+              <span class="cat-icon">☕</span> Espresso Based
             </button>
             <button class="cat-btn" data-cat="non-caffeine">
               <span class="cat-icon">🍵</span> Non-Caffeine
@@ -54,23 +48,10 @@
 
         <!-- ── CONTENT AREA ── -->
         <main class="menu-main">
-          <!-- Best Sellers banner (visible only when best-seller filter active) -->
-          <div
-            class="section-banner best-seller-banner"
-            id="banner-best-seller"
-            style="display: none"
-          >
-            <span>⭐</span>
-            <div>
-              <strong>Our Best Sellers</strong>
-              <p>The drinks our customers love most</p>
-            </div>
-          </div>
-
           <!-- ── ESPRESSO BASED ── -->
           <div class="section-group" id="group-espresso">
             <div class="section-banner espresso-banner">
-              <span>🫘</span>
+              <span>☕</span>
               <div>
                 <strong>Espresso Based</strong>
                 <p>Bold shots, rich flavors, every cup brewed with care</p>
@@ -160,8 +141,8 @@
                 class="product-card best-seller"
                 data-cat="espresso best-seller"
               >
-                <div class="card-img-wrap">
-                  <img src="IMAGES/P3.jpg" alt="Caramel Macchiato" />
+                <div class="card-img-wrap no-photo espresso-placeholder warm">
+                  <span class="placeholder-icon">🍯</span>
                   <span class="best-seller-badge">⭐ Best Seller</span>
                 </div>
                 <div class="card-body">
@@ -196,8 +177,8 @@
                 class="product-card best-seller"
                 data-cat="espresso best-seller"
               >
-                <div class="card-img-wrap">
-                  <img src="IMAGES/P6.jpg" alt="Horchata Latte" />
+                <div class="card-img-wrap no-photo espresso-placeholder">
+                  <span class="placeholder-icon">🥤</span>
                   <span class="best-seller-badge">⭐ Best Seller</span>
                 </div>
                 <div class="card-body">
@@ -262,8 +243,8 @@
                 class="product-card best-seller"
                 data-cat="non-caffeine best-seller"
               >
-                <div class="card-img-wrap">
-                  <img src="IMAGES/P7.jpg" alt="Dark Choco" />
+                <div class="card-img-wrap no-photo choco-placeholder">
+                  <span class="placeholder-icon">🍫</span>
                   <span class="best-seller-badge">⭐ Best Seller</span>
                 </div>
                 <div class="card-body">
@@ -298,8 +279,8 @@
                 class="product-card best-seller"
                 data-cat="non-caffeine best-seller"
               >
-                <div class="card-img-wrap">
-                  <img src="IMAGES/P2.jpg" alt="Fruit Soda" />
+                <div class="card-img-wrap no-photo choco-placeholder light">
+                  <span class="placeholder-icon">🥤</span>
                   <span class="best-seller-badge">⭐ Best Seller</span>
                 </div>
                 <div class="card-body">
@@ -348,11 +329,6 @@
             <!-- /products-grid non-caffeine -->
           </div>
           <!-- /section-group non-caffeine -->
-
-          <!-- No results message -->
-          <div class="no-results" id="no-results" style="display: none">
-            No items in this category yet.
-          </div>
         </main>
       </div>
       <!-- /menu-layout -->
@@ -371,61 +347,28 @@
 
     <script>
       const catBtns = document.querySelectorAll(".cat-btn");
-      const allCards = document.querySelectorAll(".product-card");
-      const espressoGroup = document.getElementById("group-espresso");
-      const noncaffGroup = document.getElementById("group-non-caffeine");
-      const bestSellerBanner = document.getElementById("banner-best-seller");
-      const noResults = document.getElementById("no-results");
-
-      function applyFilter(cat) {
-        // Toggle card visibility
-        let visibleCount = 0;
-        allCards.forEach((card) => {
-          const cats = card.dataset.cat.split(" ");
-          const show = cat === "all" || cats.includes(cat);
-          card.style.display = show ? "" : "none";
-          if (show) visibleCount++;
-        });
-
-        // Show/hide section groups
-        if (cat === "all") {
-          espressoGroup.style.display = "";
-          noncaffGroup.style.display = "";
-          bestSellerBanner.style.display = "none";
-        } else if (cat === "best-seller") {
-          espressoGroup.querySelector(".section-banner").style.display = "none";
-          noncaffGroup.querySelector(".section-banner").style.display = "none";
-          bestSellerBanner.style.display = "flex";
-
-          // Show both groups but hide their banners so cards still layout properly
-          espressoGroup.style.display = "";
-          noncaffGroup.style.display = "";
-        } else if (cat === "espresso") {
-          espressoGroup.style.display = "";
-          noncaffGroup.style.display = "none";
-          bestSellerBanner.style.display = "none";
-          espressoGroup.querySelector(".section-banner").style.display = "flex";
-        } else if (cat === "non-caffeine") {
-          espressoGroup.style.display = "none";
-          noncaffGroup.style.display = "";
-          bestSellerBanner.style.display = "none";
-          noncaffGroup.querySelector(".section-banner").style.display = "flex";
-        }
-
-        // Restore banners when switching away from best-seller
-        if (cat !== "best-seller") {
-          espressoGroup.querySelector(".section-banner").style.display = "flex";
-          noncaffGroup.querySelector(".section-banner").style.display = "flex";
-        }
-
-        noResults.style.display = visibleCount === 0 ? "block" : "none";
-      }
 
       catBtns.forEach((btn) => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", (e) => {
+          const cat = btn.dataset.cat;
+
+          // Update active button
           catBtns.forEach((b) => b.classList.remove("active"));
           btn.classList.add("active");
-          applyFilter(btn.dataset.cat);
+
+          // Navigate/scroll to section
+          if (cat === "espresso") {
+            // Scroll to espresso section
+            const espressoGroup = document.getElementById("group-espresso");
+            espressoGroup.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          } else if (cat === "non-caffeine") {
+            // Scroll to non-caffeine section
+            const noncaffGroup = document.getElementById("group-non-caffeine");
+            noncaffGroup.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
         });
       });
     </script>

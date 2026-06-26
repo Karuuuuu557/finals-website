@@ -1,26 +1,21 @@
-/* ═══════════════════════════════════════════════════════════════════════════
-   UNIFIED GLOBAL STYLES - FIVESIX LEGASPI CAFE
-   Consistent fonts, colors, and design system across all pages
-═══════════════════════════════════════════════════════════════════════════ */
-
 :root {
   /* PRIMARY COLOR PALETTE */
-  --primary-cream: #EDE4D0;
-  --primary-cream-light: #F8F4EE;
-  --primary-brown: #8C5C38;
-  --primary-brown-dark: #4A2E1A;
-  --primary-brown-light: #C4875A;
-  --dark-bg: #2D1B07;
+  --primary-cream: #ede4d0;
+  --primary-cream-light: #f8f4ee;
+  --primary-brown: #8c5c38;
+  --primary-brown-dark: #4a2e1a;
+  --primary-brown-light: #c4875a;
+  --dark-bg: #2d1b07;
 
   /* SECONDARY COLORS */
-  --text-dark: #2D1B07;
-  --text-muted: #7C6A5A;
-  --card-bg: #FFFFFF;
+  --text-dark: #2d1b07;
+  --text-muted: #7c6a5a;
+  --card-bg: #ffffff;
   --border-light: rgba(0, 0, 0, 0.1);
   --shadow-light: rgba(0, 0, 0, 0.15);
 
   /* FONT FAMILY */
-  --font-primary: 'DM Sans', sans-serif;
+  --font-primary: "DM Sans", sans-serif;
 
   /* SPACING */
   --spacing-xs: 0.25rem;
@@ -55,7 +50,12 @@ body {
    TYPOGRAPHY
 ═══════════════════════════════════════════════════════════════════════════ */
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-primary);
   color: var(--text-dark);
 }
@@ -324,6 +324,26 @@ footer {
 ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
+  }
+
   .nav-container {
     flex-direction: column;
     padding: 15px;
