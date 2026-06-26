@@ -47,6 +47,7 @@ body {
 /* SIDEBAR */
 .sidebar {
   width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
   background: var(--panel);
   border-right: 1.5px solid var(--border);
   display: flex;
@@ -54,7 +55,6 @@ body {
   align-items: center;
   padding: 28px 0 20px;
   flex-shrink: 0;
-  overflow-y: auto;
 }
 
 .avatar {
@@ -71,7 +71,6 @@ body {
 }
 
 .sidebar-name {
-  font-family: "Playfair Display", serif;
   font-size: 13.5px;
   font-weight: 700;
   text-align: center;
@@ -84,19 +83,15 @@ body {
   margin-bottom: 28px;
 }
 
-/* Override GlobalStyles.css .nav-links which sets flex-direction: row */
-.sidebar .nav-links {
+/* Mirror Merchandise sidebar */
+.nav-links {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
 }
 
-/* Override GlobalStyles.css nav a which sets different padding/bg/border-radius */
-.sidebar .nav-link {
+.nav-link {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -104,24 +99,19 @@ body {
   font-size: 13.5px;
   font-weight: 500;
   color: var(--muted);
-  cursor: pointer;
+  text-decoration: none;
   transition:
     background 0.18s,
     color 0.18s;
-  text-decoration: none;
   border-left: 3px solid transparent;
-  border-radius: 0;
-  background: transparent;
-  margin: 0;
 }
 
-.sidebar .nav-link:hover {
+.nav-link:hover {
   background: var(--border);
   color: var(--text);
-  transform: none;
 }
 
-.sidebar .nav-link.active {
+.nav-link.active {
   color: var(--accent);
   font-weight: 600;
   border-left: 3px solid var(--accent);
@@ -139,25 +129,27 @@ body {
 .logout-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 11px 22px;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--muted);
-  cursor: pointer;
-  background: none !important;
-  border: none;
-  font-family: var(--font-primary);
-  width: 100%;
-  border-radius: 0;
-  transform: none !important;
+  text-decoration: none;
   transition: color 0.18s;
+  width: 100%;
+  text-align: center;
+}
+
+.logout-btn:visited,
+.logout-btn:hover,
+.logout-btn:active,
+.logout-btn:focus {
+  text-decoration: none;
 }
 
 .logout-btn:hover {
-  color: var(--red) !important;
-  background: none !important;
-  transform: none !important;
+  color: var(--red);
 }
 
 /* CONTENT */
@@ -199,7 +191,7 @@ body {
 }
 
 .brand-name {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 15px;
   font-weight: 700;
   color: var(--accent);
@@ -280,7 +272,7 @@ body {
 }
 
 .profile-fullname {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 17px;
   font-weight: 700;
   color: var(--text);
@@ -352,7 +344,7 @@ body {
 }
 
 .section-title {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 15px;
   font-weight: 700;
   color: var(--text);
@@ -586,62 +578,90 @@ body {
   }
 }
 
-@media (max-width: 900px) {
-  body {
-    display: block;
-    height: auto;
-    overflow: auto;
-  }
-
+@media (max-width: 992px) {
   .sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1.5px solid var(--border);
-    padding: 14px 16px;
-    align-items: flex-start;
-    gap: 10px;
+    width: 70px;
+    min-width: 70px;
+    padding: 20px 0;
   }
 
-  .sidebar .nav-links {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-
-  .sidebar .nav-link {
-    border-left: none;
-    border-radius: 10px;
-    padding: 8px 12px;
-  }
-
-  .sidebar .nav-link.active {
-    border-left: none;
-  }
-
-  .sidebar-spacer {
+  .sidebar-name,
+  .sidebar-role {
     display: none;
   }
 
+  .nav-link {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .nav-link span:not(.nav-icon) {
+    display: none;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .sidebar {
+    width: 100%;
+    min-width: unset;
+    height: 60px;
+    flex-direction: row;
+    padding: 0 16px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    border-right: none;
+    border-top: 1.5px solid var(--border);
+  }
+
+  .nav-links {
+    flex-direction: row;
+    gap: 4px;
+  }
+
+  .nav-link {
+    flex-direction: column;
+    padding: 8px 12px;
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  .nav-icon {
+    font-size: 20px;
+  }
+
+  .sidebar-spacer,
   .logout-btn {
-    width: auto;
-    padding: 8px 0;
+    display: none;
   }
 
   .content {
+    margin-bottom: 60px;
     overflow: visible;
   }
 
   .topbar {
     padding: 0 16px;
+    height: 56px;
+  }
+
+  .brand-name {
+    display: none;
   }
 
   .main-scroll {
     padding: 16px;
     overflow: visible;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
   }
 }
 

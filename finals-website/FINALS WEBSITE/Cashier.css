@@ -13,6 +13,13 @@
   --white: #ffffff;
   --green: #3a7d54;
   --red: #c0392b;
+  --stock-low: #b07a10;
+  --stock-critical: #b04040;
+  --stock-out: #bbb;
+  --stock-out-text: #888;
+  --receipt-line: #444;
+  --receipt-muted: #666;
+  --receipt-subtle: #999;
   --order-bg: var(--primary-cream-light);
   --shadow: 0 4px 24px rgba(45, 27, 7, 0.1);
 }
@@ -62,7 +69,7 @@ header {
   font-size: 18px;
 }
 .logo-name {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 16px;
   font-weight: 700;
   color: var(--accent);
@@ -291,52 +298,33 @@ header {
   cursor: not-allowed;
 }
 
-/* STOCK BADGE */
-.stock-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10.5px;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 20px;
-  margin-top: 4px;
-  letter-spacing: 0.02em;
-}
-.stock-badge::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
 .stock-ok {
   background: #e8f5ee;
-  color: #3a7d54;
+  color: var(--green);
 }
 .stock-ok::before {
-  background: #3a7d54;
+  background: var(--green);
 }
 .stock-low {
   background: #fef7e0;
-  color: #b07a10;
+  color: var(--stock-low);
 }
 .stock-low::before {
-  background: #b07a10;
+  background: var(--stock-low);
 }
 .stock-crit {
   background: #faeaea;
-  color: #b04040;
+  color: var(--stock-critical);
 }
 .stock-crit::before {
-  background: #b04040;
+  background: var(--stock-critical);
 }
 .stock-out {
   background: #f0f0f0;
-  color: #888;
+  color: var(--stock-out-text);
 }
 .stock-out::before {
-  background: #bbb;
+  background: var(--stock-out);
 }
 
 /* OUT OF STOCK card dimming */
@@ -417,7 +405,7 @@ header {
   border-bottom: 1.5px solid var(--border);
 }
 .order-title {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-weight: 700;
   font-size: 15px;
 }
@@ -621,15 +609,18 @@ header {
 .logout-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   color: #c9a898;
-  font-size: 12.5px;
-  font-weight: 500;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
   background: none;
   border: none;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-primary);
+  text-decoration: none;
   transition: color 0.18s;
+  text-align: center;
 }
 .logout-btn:hover {
   color: #fff;
@@ -703,7 +694,7 @@ header {
   flex: 1;
 }
 .modal-title {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 17px;
   font-weight: 700;
   color: var(--accent);
@@ -827,7 +818,7 @@ header {
   max-width: 96vw;
 }
 .checkout-title {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 17px;
   font-weight: 700;
   text-align: center;
@@ -880,7 +871,7 @@ header {
   margin: 14px 0 8px;
 }
 .total-amount-big {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 30px;
   font-weight: 700;
   color: var(--accent);
@@ -1077,7 +1068,7 @@ header {
 }
 .panel-tab.active {
   color: var(--accent);
-  border-bottom-color: var(--accent);
+  border-bottom-color: transparent;
 }
 
 /* PANEL VIEWS */
@@ -1104,7 +1095,7 @@ header {
 .receipt-paper {
   background: #ffffff;
   width: 210px;
-  font-family: "Courier New", Courier, monospace;
+  font-family: var(--font-primary);
   font-size: 10.5px;
   line-height: 1.5;
   padding: 12px 11px;
@@ -1144,11 +1135,11 @@ header {
   font-weight: bold;
 }
 .r-line {
-  border-top: 1px dashed #bbb;
+  border-top: 1px dashed var(--stock-out);
   margin: 5px 0;
 }
 .r-dline {
-  border-top: 2px solid #444;
+  border-top: 2px solid var(--receipt-line);
   margin: 5px 0;
 }
 .r-row {
@@ -1163,16 +1154,16 @@ header {
 }
 .r-indent {
   padding-left: 8px;
-  color: #666;
+  color: var(--receipt-muted);
   font-size: 10px;
 }
 .r-muted {
-  color: #999;
+  color: var(--receipt-subtle);
   font-size: 10px;
 }
 .r-empty {
   text-align: center;
-  color: #bbb;
+  color: var(--stock-out);
   padding: 28px 0;
   font-size: 11px;
   line-height: 1.8;
@@ -1185,7 +1176,7 @@ header {
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-primary);
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
@@ -1265,7 +1256,7 @@ header {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 720px) {
   .items-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1345,4 +1336,99 @@ header {
 ::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 10px;
+}
+
+/* ── NEW DISCOUNT TABS ── */
+.disc-modal {
+  max-width: 380px !important;
+  width: 380px !important;
+}
+.disc-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.disc-tab {
+  flex: 1;
+  padding: 7px 4px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: #fff;
+  font-family: "DM Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s;
+  color: var(--text);
+}
+.disc-tab.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.disc-tab:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.disc-section {
+  display: none;
+}
+.disc-section.show {
+  display: block;
+}
+.disc-field {
+  margin-bottom: 10px;
+}
+.disc-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #555;
+}
+.disc-field input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  box-sizing: border-box;
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+}
+.disc-field input:focus {
+  border-color: var(--accent-light);
+}
+.id-verified {
+  display: none;
+  font-size: 11.5px;
+  color: var(--green);
+  margin-top: 4px;
+}
+.id-verified.show {
+  display: block;
+}
+.disc-preview-row {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 10px 0 14px;
+}
+.disc-preview-row b {
+  color: var(--green);
+}
+.disc-select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  box-sizing: border-box;
+  margin-bottom: 8px;
+  background: var(--bg);
+  color: var(--text);
 }

@@ -1,63 +1,187 @@
 <?php
-require_once 'databasetoSQL.php';
+require_once 'auth.php';
+requireRole('admin');
+require_once __DIR__ . '/db.php';
+
+// Check if user is logged in
+if (!isset($_SESSION['username'])) {
+    header("Location: LOGIN.php");
+    exit();
+}
+
+$conn2 = connect_login_db();
+
+//----------------- LOGGED IN USER -----------
+$username = $_SESSION['username'];
+$query = "SELECT email, username, roles, datejoined FROM employee_credentials WHERE username = ? OR email = ?";
+$stmt = $conn2->prepare($query);
+$stmt->bind_param("ss", $username, $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    header("Location: LOGIN.php");
+    exit();
+}
+
+$user = $result->fetch_assoc();
+$stmt->close();
+
+$roles = $user['roles'];
+$displayName = ucfirst($username);
+
+//login credentials query dont remove comment here
+$username = $_SESSION['username'];
+$query = "SELECT email, username FROM employee_credentials WHERE username = ? OR email = ?";
+$stmt = $conn2->prepare($query);
+$stmt->bind_param("ss", $username, $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$user = $result->fetch_assoc();
+$stmt->close();
+
+$user_email = $user['email'];
+$user_name = ucfirst($username);
+
+
+
+$conn = connect_main_db();
 
 if ($_SERVER["REQUEST_METHOD"] === 'POST') {
+  header('Content-Type: application/json');
   $action = $_POST['action'] ?? '';
 
   if ($action === 'restock') {
 
     
-
+    
     $id  = intval($_POST['id']);
     $qty = floatval($_POST['qty']);
 
-    $query = "UPDATE ingredients 
-              SET current_quantity = current_quantity + $qty 
-              WHERE ingredient_id = $id";
+    $query = "UPDATE ingredients SET current_quantity = current_quantity + ? WHERE ingredient_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("di", $qty, $id);
+    $result = $stmt->execute();
+    $stmt->close();
 
-    $result = $conn->query($query);
+    if ($result) {
+      $ingredient_stmt = $conn->prepare("SELECT ingredient_name FROM ingredients WHERE ingredient_id = ?");
+      $ingredient_stmt->bind_param("i", $id);
+      $ingredient_stmt->execute();
+      $ingredient = $ingredient_stmt->get_result()->fetch_assoc();
+      $ingredient_stmt->close();
+      $ingredient_name = $ingredient['ingredient_name'] ?? 'Ingredient';
+
+      $log_query = "INSERT INTO activity_logs (user_id, user_name, type, action, detail, ref, ip_address, created_at, email) 
+                    VALUES (1, ?, 'restock', 'Restock recorded', ?, 'FS-', ?, NOW(), ?)";
+      $log_stmt = $conn->prepare($log_query);
+      $detail = "Restocked {$ingredient_name} by {$qty} units";
+      $ip_address = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+      $log_stmt->bind_param("ssss", $user_name, $detail, $ip_address, $user_email);
+      $log_stmt->execute();
+      $log_stmt->close();
+    }
 
     echo json_encode(['success' => true]);
     exit;
 }
  
-  if ($action === 'reduce') {
-    $id  = intval($_POST['id']);
-    $qty = floatval($_POST['qty']);
-    $result = $conn->query("UPDATE ingredients SET current_quantity = current_quantity - $qty WHERE ingredient_id = $id");
-    echo json_encode(['success' => (bool)$result]);
-    exit;
-  }
  
   if ($action === 'edit') {
     $id       = intval($_POST['id']);
     $name     = $conn->real_escape_string($_POST['name']);
     $qty  = floatval($_POST['qty']);
 
-    $result = $conn->query("UPDATE ingredients SET ingredient_name='$name', current_quantity=$qty WHERE ingredient_id=$id");
+    $query = "UPDATE ingredients SET ingredient_name = ?, current_quantity = ? WHERE ingredient_id = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("sdi", $name, $qty, $id);
+    $result = $stmt->execute();
+    $stmt->close();
+    if ($result) {
+      $ingredient_stmt = $conn->prepare("SELECT ingredient_name FROM ingredients WHERE ingredient_id = ?");
+      $ingredient_stmt->bind_param("i", $id);
+      $ingredient_stmt->execute();
+      $ingredient = $ingredient_stmt->get_result()->fetch_assoc();
+      $ingredient_stmt->close();
+      $ingredient_name = $ingredient['ingredient_name'] ?? 'Ingredient';
+
+      $log_query = "INSERT INTO activity_logs (user_id, user_name, type, action, detail, ref, ip_address, created_at, email) 
+                    VALUES (1, ?, 'stock', 'Stock reduced', ?, 'FS-', ?, NOW(), ?)";
+      $log_stmt = $conn->prepare($log_query);
+      $detail = "Reduced {$ingredient_name} to {$qty} units";
+      $ip_address = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+      $log_stmt->bind_param("ssss", $user_name, $detail, $ip_address, $user_email);
+      $log_stmt->execute();
+      $log_stmt->close();
+    }
     echo json_encode(['success' => (bool)$result]);
     exit;
   }
  
+  //add ingredients
   if ($action === 'add') {
     $name     = $conn->real_escape_string($_POST['name']);
     $category = $conn->real_escape_string($_POST['category']);
     $unit     = $conn->real_escape_string($_POST['unit']);
     $qty      = floatval($_POST['qty']);
-    $result   = $conn->query("INSERT INTO ingredients (ingredient_name, category, unit_of_measure, current_quantity) VALUES ('$name', '$category', '$unit', $qty)");
-    echo json_encode(['success' => (bool)$result, 'id' => $conn->insert_id]);
+   $query = "INSERT INTO ingredients (ingredient_name, category, unit_of_measure, current_quantity) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("sssd", $name, $category, $unit, $qty);
+    $result = $stmt->execute();
+    $insert_id = $stmt->insert_id;
+    $stmt->close();
+    if ($result) {
+      $log_query = "INSERT INTO activity_logs (user_id, user_name, type, action, detail, ref, ip_address, created_at, email) 
+                    VALUES (1, ?, 'Add', 'Stock Added', ?, 'FS-', ?, NOW(), ?)";
+      $log_stmt = $conn->prepare($log_query);
+      $detail = "Added {$name} to stocks";
+      $ip_address = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+      $log_stmt->bind_param("ssss", $user_name, $detail, $ip_address, $user_email);
+      $log_stmt->execute();
+      $log_stmt->close();
+    }
+    echo json_encode(['success' => (bool)$result, 'id' => $insert_id]);
     exit;
   }
  
+  //set ingredients to 0 when deleted for record purposes
   if ($action === 'delete') {
     $id = intval($_POST['id']);
-    $result = $conn->query("DELETE FROM ingredients WHERE ingredient_id = $id");
+    $ing_stmt = $conn->prepare("SELECT ingredient_name FROM ingredients WHERE ingredient_id = ?");
+    $ing_stmt->bind_param("i", $id);
+    $ing_stmt->execute();
+    $ingredient = $ing_stmt->get_result()->fetch_assoc();
+    $ing_stmt->close();
+
+    if (!$ingredient) {
+      echo json_encode(['success' => false]);
+      exit;
+    }
+
+    $ingredient_name = $ingredient['ingredient_name'];
+
+    $del_stmt = $conn->prepare("UPDATE ingredients SET is_active = 0 WHERE ingredient_id = ?");
+    $del_stmt->bind_param("i", $id);
+    $result = $del_stmt->execute();
+    $del_stmt->close();
+
+    if ($result) {
+      $log_query = "INSERT INTO activity_logs (user_id, user_name, type, action, detail, ref, ip_address, created_at, email) 
+                    VALUES (1, ?, 'Delete', 'Stock Deleted', ?, 'FS-', ?, NOW(),?)";
+      $log_stmt = $conn->prepare($log_query);
+      $detail = "Deleted $ingredient_name";
+      $ip_address = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+      $log_stmt->bind_param("ssss", $user_name, $detail, $ip_address, $user_email);
+      $log_stmt->execute();
+      $log_stmt->close();
+    }
     echo json_encode(['success' => (bool)$result]);
     exit;
   }
 }
 
-$ing_result = $conn->query("SELECT ingredient_id AS id, ingredient_name AS name, category, unit_of_measure AS unit, current_quantity AS qty FROM ingredients ORDER BY category, ingredient_name");
+$ing_result = $conn->query("SELECT ingredient_id AS id, ingredient_name AS name, category, unit_of_measure AS unit, current_quantity AS qty FROM ingredients WHERE is_active = 1 ORDER BY category, ingredient_name");
 $ingredients_php = [];
 while ($row = $ing_result->fetch_assoc()) {
   $row['qty'] = floatval($row['qty']);
@@ -74,6 +198,7 @@ $ingredients_json = json_encode($ingredients_php);
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FiveSix Legazpi Cafe — Stocks</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="Stocks.css" type="text/css" rel="stylesheet">
   
 </head>
@@ -83,17 +208,21 @@ $ingredients_json = json_encode($ingredients_php);
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="avatar">👤</div>
-    <div class="sidebar-name">Dingdong Khan</div>
-    <div class="sidebar-role">Administrator</div>
+    <div class="sidebar-name"><?php echo htmlspecialchars($displayName); ?></div>
+
     <nav class="nav-links">
-      <a class="nav-link" href="Merchandise.php"><span class="nav-icon">🖥</span> Dashboard</a>
+    
+    <?php if ($_SESSION['role'] === 'admin'): ?>
+        <a class="nav-link" href="Merchandise.php"><span class="nav-icon">🖥</span> Dashboard</a>
+        <a class="nav-link active" href="Stocks.php"><span class="nav-icon">📦</span> Stocks</a>
+      <?php endif; ?>
+      
+      <a class="nav-link" href="Cashier.php"><span class="nav-icon"><img src="IMAGES/P9.png" style="width:22px;height:22px;"></span> Cashier</a>
       <a class="nav-link" href="OrderingSystem.php"><span class="nav-icon">📋</span> Orders</a>
-      <a class="nav-link" href="Cashier.php"><span class="nav-icon">📊</span> Sales</a>
-      <a class="nav-link active" href="Stocks.php"><span class="nav-icon">📦</span> Stocks</a>
       <a class="nav-link" href="Profile.php"><span class="nav-icon">👤</span> Profile</a>
     </nav>
     <div class="sidebar-spacer"></div>
-    <button class="logout-btn" href="LOGIN.php" showToast('Logged out!')">Log out ➜</button>
+    <a class="logout-btn" href="logout.php">Log out ➜</a>
   </aside>
 
   <!-- CONTENT -->
@@ -127,12 +256,12 @@ $ingredients_json = json_encode($ingredients_php);
     <div class="toolbar">
       <span style="font-size:12px;font-weight:600;color:var(--muted);">Filter:</span>
       <button class="filter-chip active" onclick="setFilter('all',this)">All</button>
-      <button class="filter-chip chip-ok" onclick="setFilter('ok',this)" style="background:var(--green-bg);color:var(--green);border-color:#9dd4b4;">In Stock</button>
+      <button class="filter-chip chip-ok" onclick="setFilter('ok',this)">In Stock</button>
       <button class="filter-chip chip-low" onclick="setFilter('low',this)">Low</button>
       <button class="filter-chip chip-crit" onclick="setFilter('crit',this)">Critical</button>
       <button class="filter-chip chip-out" onclick="setFilter('out',this)">Out of Stock</button>
       <div class="toolbar-right">
-        <button class="add-stock-btn" onclick="openAddProduct()">＋ Add Product</button>
+        <button class="add-stock-btn" onclick="openAddProduct()">＋ Add Ingredient</button>
       </div>
     </div>
 
@@ -179,7 +308,7 @@ $ingredients_json = json_encode($ingredients_php);
   <div class="modal-overlay" id="editModal">
     <div class="modal">
       <button class="modal-close" onclick="closeModal('editModal')">✕</button>
-      <div class="modal-title">remove </div>
+      <div class="modal-title">Edit Ingredient</div>
       <input type="hidden" id="editProductId">
       <div class="modal-field">
         <label>Product Name</label>
@@ -196,41 +325,48 @@ $ingredients_json = json_encode($ingredients_php);
     </div>
   </div>
 
-  <!-- ADD PRODUCT MODAL -->
-  <div class="modal-overlay" id="addProductModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
-      <div class="modal-title">Add New Product</div>
-      <div class="modal-field">
-        <label>Product Name</label>
-        <input type="text" id="newName" placeholder="e.g. Cold Brew...">
-      </div>
-      <div class="modal-field">
-        <label>Variant / Notes</label>
-        <input type="text" id="newVariant" placeholder="e.g. Espresso, Classic...">
-      </div>
-      <div class="modal-field">
-        <label>Category</label>
-        <select id="newCategory">
-          <option value="Espresso Based">Espresso Based</option>
-          <option value="Non-Caffeine">Non-Caffeine</option>
-          <option value="ADD-ONS">ADD-ONS</option>
-        </select>
-      </div>
-      <div class="modal-field">
-        <label>Price (₱)</label>
-        <input type="number" id="newPrice" placeholder="0" min="0">
-      </div>
-      <div class="modal-field">
-        <label>Initial Stock</label>
-        <input type="number" id="newStock" placeholder="0" min="0">
-      </div>
-      <div class="modal-actions">
-        <button class="modal-cancel" onclick="closeModal('addProductModal')">Cancel</button>
-        <button class="modal-save" onclick="confirmAddProduct()">Add Product</button>
-      </div>
+
+<!-- ADD INGREDIENT MODAL -->
+<div class="modal-overlay" id="addProductModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
+    <div class="modal-title">Add New Ingredient</div>
+    <div class="modal-field">
+      <label>Ingredient Name</label>
+      <input type="text" id="newName" placeholder="e.g. Espresso Beans...">
+    </div>
+    <div class="modal-field">
+      <label>Category</label>
+      <select id="newCategory">
+        <option value="Espresso">Espresso</option>
+        <option value="Milk">Milk</option>
+        <option value="Syrup">Syrup</option>
+        <option value="Chocolate">Chocolate</option>
+        <option value="Topping">Topping</option>
+        <option value="Base">Base</option>
+        <option value="Non-Caffeine">Non-Caffeine</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Unit of Measure</label>
+      <select id="newUnit">
+        <option value="g">Grams (g)</option>
+        <option value="ml">Milliliters (ml)</option>
+        <option value="l">Liters (l)</option>
+        <option value="kg">Kilograms (kg)</option>
+        <option value="oz">Ounces (oz)</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Initial Quantity</label>
+      <input type="number" id="newStock" placeholder="0" min="0" step="0.01">
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal('addProductModal')">Cancel</button>
+      <button class="modal-save" onclick="confirmAddProduct()">Add Ingredient</button>
     </div>
   </div>
+</div>
 
   <div class="toast" id="toast"></div>
 
@@ -324,37 +460,32 @@ $ingredients_json = json_encode($ingredients_php);
     // ─── KPI ─────────────────────────────────────────────────────────
     function renderKPI() {
       const total = products.length;
-      const out = products.filter(p => p.qty
- === 0).length;
-      const crit = products.filter(p => p.qty
- > 0 && p.qty
- <= 5).length;
-      const ok = products.filter(p => p.qty
- > 10).length;
+      const out = products.filter(p => p.qty === 0).length;
+      const crit = products.filter(p => p.qty > 0 && p.qty <= 5).length;
+      const low = products.filter(p => p.qty > 5 && p.qty <= 10).length;
+      const ok = products.filter(p => p.qty > 10).length;
       document.getElementById('kpiRow').innerHTML = `
-    <div class="kpi-card">
-      <div class="kpi-label">Total Products</div>
-      <div class="kpi-value">${total}</div>
-      <div class="kpi-sub">across all categories</div>
-    </div>
-    <div class="kpi-card ok">
-      <div class="kpi-label">In Stock</div>
-      <div class="kpi-value">${ok}</div>
-      <div class="kpi-sub">stock &gt; 10 units</div>
-    </div>
-    <div class="kpi-card warn">
-      <div class="kpi-label">Low / Critical</div>
-      <div class="kpi-value">${crit + products.filter(p => p.qty
- > 5 && p.qty
- <= 10).length}</div>
-      <div class="kpi-sub">need restocking soon</div>
-    </div>
-    <div class="kpi-card alert">
-      <div class="kpi-label">Out of Stock</div>
-      <div class="kpi-value">${out}</div>
-      <div class="kpi-sub">unavailable to sell</div>
-    </div>
-  `;
+        <div class="kpi-card">
+          <div class="kpi-label">Total Products</div>
+          <div class="kpi-value">${total}</div>
+          <div class="kpi-sub">across all categories</div>
+        </div>
+        <div class="kpi-card ok">
+          <div class="kpi-label">In Stock</div>
+          <div class="kpi-value">${ok}</div>
+          <div class="kpi-sub">stock &gt; 10 units</div>
+        </div>
+        <div class="kpi-card warn">
+          <div class="kpi-label">Low / Critical</div>
+          <div class="kpi-value">${crit + low}</div>
+          <div class="kpi-sub">need restocking soon</div>
+        </div>
+        <div class="kpi-card alert">
+          <div class="kpi-label">Out of Stock</div>
+          <div class="kpi-value">${out}</div>
+          <div class="kpi-sub">unavailable to sell</div>
+        </div>
+      `;
     }
 
     // ─── TABLE ───────────────────────────────────────────────────────
@@ -390,7 +521,7 @@ $ingredients_json = json_encode($ingredients_php);
         <td class="center">
           <div class="action-row" style="justify-content:center;">
             <button class="tbl-btn" onclick="openRestock(${p.id})">＋ Restock</button>
-            <button class="tbl-btn" onclick="openEdit(${p.id})">✎ Edit</button>
+            <button class="tbl-btn" onclick="openEdit(${p.id})">- Reduce</button>
             <button class="tbl-btn danger" onclick="deleteProduct(${p.id})">✕</button>
           </div>
         </td>
@@ -410,7 +541,7 @@ $ingredients_json = json_encode($ingredients_php);
       if (!p) return;
       selectedProductId = id;
       document.getElementById('restockProductInfo').innerHTML = `
-    <div class="modal-product-emoji">${p.emoji}</div>
+    <div class="modal-product-emoji">${p.emoji || '📦'}</div>
     <div>
       <div class="modal-product-name">${p.name}</div>
       <div class="modal-product-cat">${p.category}</div>
@@ -424,7 +555,7 @@ $ingredients_json = json_encode($ingredients_php);
     function confirmRestock() {
       const p = products.find(x => x.id == selectedProductId);
       if (!p) return;
-      const qty = parseInt(document.getElementById('restockQty').value) || 0;
+      const qty = parseFloat(document.getElementById('restockQty').value) || 0;
       if (qty <= 0) {
         showToast('Please enter a valid quantity.');
         return;
@@ -473,10 +604,14 @@ $ingredients_json = json_encode($ingredients_php);
 
       const name = document.getElementById('editName').value.trim() || p.name;
 
-      const qty = parseInt(document.getElementById('editStock').value) || 0;
+      const qty = parseFloat(document.getElementById('editStock').value) || 0;
+      if (qty < 0) {
+        showToast('Stock cannot be negative.');
+        return;
+      }
 
       if (qty > p.qty) {
-        showToast('input greater than current stock');
+        showToast('Cannot increase stock here. Use Restock instead.');
         return;
       };
 
@@ -521,26 +656,26 @@ $ingredients_json = json_encode($ingredients_php);
 
   function confirmAddProduct() {
   const name    = document.getElementById('newName').value.trim();
-  const variant = document.getElementById('newVariant').value.trim() || '—';
-  const cat     = document.getElementById('newCategory').value;
-  const price   = parseInt(document.getElementById('newPrice').value) || 0;
-  const stock   = parseInt(document.getElementById('newStock').value) || 0;
+  const category = document.getElementById('newCategory').value;
+  const unit     = document.getElementById('newUnit').value;
+  const qty      = parseFloat(document.getElementById('newStock').value) || 0;
   if (!name) { showToast('Product name is required.'); return; }
 
   fetch('Stocks.php', {
     method: 'POST',
-    body: new URLSearchParams({ action: 'add', name, variant, category: cat, price, stock })
+    body: new URLSearchParams({ action: 'add', name, category, unit, qty })
   })
   .then(res => res.json())
   .then(data => {
     if (data.success) {
-      const emojis = { 'Espresso Based': '☕', 'Non-Caffeine': '🍵', 'ADD-ONS': '🧃' };
-      products.push({ id: data.id, emoji: emojis[cat] || '☕', name, variant, price, category: cat, stock });
-      closeModal('addProductModal');
+      products.push({ id: data.id, name, category, unit, qty });
+
       document.getElementById('newName').value = '';
-      document.getElementById('newVariant').value = '';
-      document.getElementById('newPrice').value = '';
+      document.getElementById('newCategory').value = 'Espresso';
+      document.getElementById('newUnit').value = 'g';
       document.getElementById('newStock').value = '';
+
+closeModal('addProductModal');
       render();
       showToast(`✓ ${name} added to inventory.`);
     } else {

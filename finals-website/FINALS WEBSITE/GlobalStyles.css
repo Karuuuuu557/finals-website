@@ -324,6 +324,26 @@ footer {
 ═══════════════════════════════════════════════════════════════════════════ */
 
 @media (max-width: 768px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
+  }
+
   .nav-container {
     flex-direction: column;
     padding: 15px;

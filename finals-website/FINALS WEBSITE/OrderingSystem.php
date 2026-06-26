@@ -1,28 +1,59 @@
 <?php
-// FiveSix Legazpi Cafe — Orders
-$host = "mysql-1d69cd83-umak-e978.i.aivencloud.com";
-$port = 19494;
-$dbname = "main";
-$username = "avnadmin";
-$password = "AVNS_vZ6RVEWU-0a2Jwp-Zzz";
+require_once 'auth.php';
+require_once __DIR__ . '/db.php';
 
-// this is for connection of php to mysql
-$conn = mysqli_connect($host, $username, $password, $dbname, $port);
+if (!isset($_SESSION['username'])) {
+    header("Location: LOGIN.php");
+    exit();
+}
 
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-} 
+$conn = connect_main_db();
+$login_conn = connect_login_db();
+
+//------------LOGGED IN USER
+$username = $_SESSION['username'];
+$query = "SELECT email, username, roles, datejoined FROM employee_credentials WHERE username = ? OR email = ?";
+$stmt = $login_conn->prepare($query);
+$stmt->bind_param("ss", $username, $username);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    header("Location: LOGIN.php");
+    exit();
+}
+
+$user = $result->fetch_assoc();
+$stmt->close();
+
+$roles = $user['roles'];
+$displayName = ucfirst($username);
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json');
     $data = json_decode(file_get_contents("php://input"), true);
     if (isset($data['order_id'], $data['status'])) {
         $order_id = intval($data['order_id']);
-        $status = $conn->real_escape_string($data['status']);
-        $result = $conn->query("UPDATE orders SET status = '$status' WHERE order_id = $order_id");
+        $status = (string)$data['status'];
+        $allowed_statuses = ['pending', 'completed', 'cancelled'];
+        if (!in_array($status, $allowed_statuses, true)) {
+            echo json_encode(['success' => false, 'message' => 'Invalid status.']);
+            $conn->close();
+            exit;
+        }
+
+        $update = $conn->prepare("UPDATE orders SET status = ? WHERE order_id = ?");
+        $update->bind_param("si", $status, $order_id);
+        $result = $update->execute();
+        $update->close();
         echo json_encode(['success' => (bool)$result]);
         $conn->close();
         exit;
     }
+    echo json_encode(['success' => false, 'message' => 'Invalid request payload.']);
+    $conn->close();
+    exit;
 }
 
 $items = [];
@@ -61,6 +92,7 @@ while ($row = $queryResult->fetch_assoc()){
 }
 
 $conn->close();
+$login_conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -69,7 +101,7 @@ $conn->close();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FiveSix Legazpi Cafe — Orders</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="OrderingSystem.css" rel="stylesheet">
 </head>
 
@@ -78,17 +110,20 @@ $conn->close();
   <!-- SIDEBAR -->
   <aside class="sidebar">
     <div class="avatar">👤</div>
-    <div class="sidebar-name">Dingdong Khan</div>
-    <div class="sidebar-role">Administrator</div>
+    <div class="sidebar-name"><?php echo htmlspecialchars($displayName); ?></div>
     <nav class="nav-links">
-      <a class="nav-link" href="Merchandise.php"><span class="nav-icon">🖥</span> Dashboard</a>
+
+    <?php if ($_SESSION['role'] === 'admin'): ?>
+        <a class="nav-link" href="Merchandise.php"><span class="nav-icon">🖥</span> Dashboard</a>
+        <a class="nav-link" href="Stocks.php"><span class="nav-icon">📦</span> Stocks</a>
+      <?php endif; ?>
+      
+      <a class="nav-link" href="Cashier.php"><span class="nav-icon"><img src="IMAGES/P9.png" style="width:22px;height:22px;"></span> Cashier</a>
       <a class="nav-link active" href="OrderingSystem.php"><span class="nav-icon">📋</span> Orders</a>
-      <a class="nav-link" href="Cashier.php"><span class="nav-icon">📊</span> Sales</a>
-      <a class="nav-link" href="Stocks.php"><span class="nav-icon">📦</span> Stocks</a>
       <a class="nav-link" href="Profile.php"><span class="nav-icon">👤</span> Profile</a>
     </nav>
     <div class="sidebar-spacer"></div>
-    <a class="logout-btn" href="LOGIN.php">Log out ➜</a>
+    <a class="logout-btn" href="logout.php">Log out ➜</a>
   </aside>
 
   <!-- CONTENT -->
@@ -118,9 +153,8 @@ $conn->close();
     <div class="filter-bar">
       <span class="filter-label">Status:</span>
       <button class="status-chip all active" onclick="setStatusFilter('all', this)">All</button>
-      <button class="status-chip preparing" onclick="setStatusFilter('preparing', this)">Preparing</button>
       <button class="status-chip completed" onclick="setStatusFilter('completed', this)">Completed</button>
-      <button class="status-chip rejected" onclick="setStatusFilter('rejected', this)">Rejected</button>
+      <button class="status-chip rejected" onclick="setStatusFilter('cancelled', this)">Cancelled</button>
       <span class="filter-right" id="orderCount"></span>
     </div>
 
@@ -151,9 +185,8 @@ $conn->close();
       <div class="modal-status-row">
         <select class="modal-status-select" id="modalStatus">
           <option value="pending">Pending</option>
-          <option value="preparing">Preparing</option>
           <option value="completed">Completed</option>
-          <option value="rejected">Rejected</option>
+          <option value="cancelled">Cancelled</option>
         </select>
         <button class="modal-save-btn" onclick="saveStatus()">Save Status</button>
       </div>
@@ -249,15 +282,15 @@ $conn->close();
     // ─── RENDER ORDERS ───────────────────────────────────────────────
     function statusBadge(s) {
       const map = {
-        preparing: 'badge-preparing',
         completed: 'badge-completed',
+        cancelled: 'badge-rejected',
         rejected: 'badge-rejected',
         pending: 'badge-pending'
       };
       const labels = {
-        preparing: 'PREPARING',
         completed: 'COMPLETED',
-        rejected: 'REJECTED',
+        cancelled: 'CANCELLED',
+        rejected: 'CANCELLED',
         pending: 'PENDING'
       };
       return `<span class="status-badge ${map[s]}">${labels[s]}</span>`;
@@ -310,8 +343,8 @@ $conn->close();
           <div style="display:flex;align-items:center;gap:8px;">
             ${isPending ? `
               <div class="card-actions" onclick="event.stopPropagation()">
-                <button class="action-btn accept" onclick="event.stopPropagation(); quickStatus(${order.id},'preparing')" title="Accept">✓</button>
-<button class="action-btn reject" onclick="event.stopPropagation(); quickStatus(${order.id},'rejected')" title="Reject">✕</button>
+                <button class="action-btn accept" onclick="event.stopPropagation(); quickStatus(${order.id},'completed')" title="Accept">✓</button>
+<button class="action-btn reject" onclick="event.stopPropagation(); quickStatus(${order.id},'cancelled')" title="Cancel">✕</button>
               </div>
             ` : statusBadge(order.status)}
           </div>
@@ -329,10 +362,18 @@ $conn->close();
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ order_id: id, status: status })
-      });
-      o.status = status;
-      render();
-      showToast(`${o.label} marked as ${status}`);
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          o.status = status;
+          render();
+          showToast(`${o.label} marked as ${status}`);
+        } else {
+          showToast(`Failed to update ${o.label}.`);
+        }
+      })
+      .catch(() => showToast(`Failed to update ${o.label}.`));
     }
 
     // ─── MODAL ───────────────────────────────────────────────────────
@@ -378,8 +419,11 @@ $conn->close();
           closeModal();
           render();
           showToast(`${o.label} updated to ${newStatus}`);
+        } else {
+          showToast(`Failed to update ${o.label}.`);
         }
-      });
+      })
+      .catch(() => showToast(`Failed to update ${o.label}.`));
     }
 
     // ─── PAGINATION ──────────────────────────────────────────────────

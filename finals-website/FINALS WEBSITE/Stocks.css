@@ -30,7 +30,7 @@
   --shadow-hover: 0 8px 28px rgba(45, 27, 7, 0.13);
   --shadow-modal: 0 20px 70px rgba(45, 27, 7, 0.22);
 
-  --sidebar-w: 210px; /* ↑ was 180px */
+  --sidebar-w: 180px;
   --radius-card: 16px;
   --radius-input: 10px;
   --radius-chip: 20px;
@@ -45,14 +45,12 @@
 }
 
 body {
-  font-family: "DM Sans", sans-serif;
-  font-size: 14px; /* ↑ explicit base — was unset */
+  font-family: var(--font-primary);
   background: var(--bg);
   color: var(--text);
   height: 100vh;
   display: flex;
   overflow: hidden;
-  -webkit-font-smoothing: antialiased;
 }
 
 /* ─── SIDEBAR ─────────────────────────────────────────── */
@@ -63,39 +61,34 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 28px 0 22px;
+  padding: 28px 0 20px;
   flex-shrink: 0;
 }
 
 .avatar {
-  width: 58px;
-  height: 58px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background: var(--white);
   border: 2px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 26px;
+  font-size: 28px;
   margin-bottom: 10px;
-  box-shadow: 0 2px 8px rgba(45, 27, 7, 0.07);
 }
 
 .sidebar-name {
-  font-family: "Playfair Display", serif;
-  font-size: 14px;
+  font-size: 13.5px;
   font-weight: 700;
   text-align: center;
   color: var(--text);
-  line-height: 1.3;
-  padding: 0 14px;
 }
 
 .sidebar-role {
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--muted);
-  margin-bottom: 22px;
-  letter-spacing: 0.03em;
+  margin-bottom: 28px;
 }
 
 .nav-links {
@@ -103,44 +96,36 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 0 10px; /* ↑ inset so pill doesn't bleed to edge */
 }
 
 .nav-link {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 13px;
+  padding: 11px 22px;
   font-size: 13.5px;
   font-weight: 500;
   color: var(--muted);
   cursor: pointer;
-  transition:
-    background 0.18s,
-    color 0.18s;
+  transition: background 0.18s, color 0.18s;
   text-decoration: none;
-  border-radius: 10px; /* ↑ pill nav, was flat */
-  border-left: 2.5px solid transparent;
+  border-left: 3px solid transparent;
 }
 
 .nav-link:hover {
-  background: rgba(45, 27, 7, 0.05);
+  background: var(--border);
   color: var(--text);
 }
 
-/* ↑ warm brown active — consistent with accent */
 .nav-link.active {
   color: var(--accent);
-  font-weight: 700;
-  background: rgba(123, 63, 46, 0.09);
-  border-left: 2.5px solid var(--accent);
+  font-weight: 600;
+  background: rgba(123, 63, 46, 0.07);
+  border-left: 3px solid var(--accent);
 }
 
 .nav-icon {
-  font-size: 15px;
-  flex-shrink: 0;
-  width: 20px;
-  text-align: center;
+  font-size: 17px;
 }
 
 .sidebar-spacer {
@@ -150,17 +135,28 @@ body {
 .logout-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  padding: 10px 22px;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 700;
   color: var(--muted);
   cursor: pointer;
   background: none;
   border: none;
-  font-family: "DM Sans", sans-serif;
+  font-family: var(--font-primary);
+  text-decoration: none;
   transition: color 0.18s;
   width: 100%;
+  text-align: center;
+}
+
+.logout-btn:link,
+.logout-btn:visited,
+.logout-btn:hover,
+.logout-btn:active,
+.logout-btn:focus {
+  text-decoration: none !important;
 }
 
 .logout-btn:hover {
@@ -181,43 +177,36 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 28px;
-  height: 66px; /* ↑ was 64px */
+  height: 64px;
   background: var(--bg);
   border-bottom: 1.5px solid var(--border);
   flex-shrink: 0;
-  gap: 16px;
 }
 
 .brand {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 12px;
 }
 
-/* ↑ FIX: cream icon instead of brown — cohesive with Profile page */
 .brand-icon {
   width: 36px;
   height: 36px;
-  background: var(--panel);
-  border: 1.5px solid var(--border);
+  background: var(--accent);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
-  box-shadow: 0 1px 4px rgba(45, 27, 7, 0.1);
 }
 
-/* ↑ FIX: use --text not --accent — less loud, more refined */
 .brand-name {
-  font-family: "Playfair Display", serif;
-  font-size: 16px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 15px;
   font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.01em;
+  color: var(--accent);
 }
 
-/* ↑ IMPROVED search bar */
 .search-bar {
   display: flex;
   align-items: center;
@@ -225,23 +214,20 @@ body {
   background: var(--white);
   border: 1.5px solid var(--border);
   border-radius: 10px;
-  padding: 8px 14px;
-  width: 260px;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
+  padding: 7px 14px;
+  width: 240px;
+  transition: border-color 0.2s;
 }
 
 .search-bar:focus-within {
-  border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(45, 27, 7, 0.06);
+  border-color: var(--accent-light);
 }
 
 .search-bar input {
   border: none;
   background: transparent;
   font-family: "DM Sans", sans-serif;
-  font-size: 13.5px; /* ↑ was 13px */
+  font-size: 13px;
   color: var(--text);
   width: 100%;
   outline: none;
@@ -253,9 +239,10 @@ body {
 
 .topbar-right {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  gap: 6px;
   flex-direction: column;
-  gap: 2px;
+  text-align: right;
   text-align: right;
   flex-shrink: 0;
 }
@@ -278,7 +265,7 @@ body {
 
 /* ↑ clean serif title — no inline emoji (remove it from HTML) */
 .page-title {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 23px;
   font-weight: 700;
   color: var(--text); /* ↑ was --accent; text is more authoritative */
@@ -342,7 +329,7 @@ body {
 }
 
 .kpi-value {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 30px; /* ↑ was 26px — more commanding */
   font-weight: 700;
   color: var(--text);
@@ -786,7 +773,7 @@ body {
 }
 
 .modal-title {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-primary);
   font-size: 18px; /* ↑ was 17px */
   font-weight: 700;
   margin-bottom: 20px;
@@ -947,4 +934,186 @@ body {
 ::-webkit-scrollbar-thumb {
   background: rgba(45, 27, 7, 0.15);
   border-radius: 10px;
+}
+
+/* ─── RESPONSIVE ───────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 70px;
+    min-width: 70px;
+    padding: 20px 0;
+  }
+
+  .sidebar-name,
+  .sidebar-role,
+  .nav-link span:not(.nav-icon) {
+    display: none;
+  }
+
+  .nav-link {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .kpi-row {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+  }
+
+  .toolbar-right {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  body {
+    min-height: 100vh;
+    height: auto;
+    overflow-x: hidden;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 100%;
+    height: 60px;
+    flex-direction: row;
+    padding: 0 16px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    border-right: none;
+    border-top: 1.5px solid var(--border);
+    z-index: 50;
+  }
+
+  .nav-links {
+    flex-direction: row;
+    gap: 4px;
+  }
+
+  .nav-link {
+    flex-direction: column;
+    padding: 8px 12px;
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  .nav-icon {
+    font-size: 20px;
+  }
+
+  .sidebar-spacer,
+  .logout-btn {
+    display: none;
+  }
+
+  .content {
+    margin-bottom: 60px;
+  }
+
+  .topbar {
+    padding: 0 16px;
+    height: 56px;
+    gap: 10px;
+  }
+
+  .brand-name {
+    display: none;
+  }
+
+  .search-bar {
+    width: 180px;
+  }
+
+  .page-header {
+    padding: 16px 16px 0;
+  }
+
+  .kpi-row {
+    padding: 14px 16px 2px;
+    gap: 10px;
+  }
+
+  .toolbar {
+    padding: 12px 16px;
+    gap: 6px;
+  }
+
+  .filter-chip {
+    padding: 6px 12px;
+  }
+
+  .table-wrap {
+    padding: 0 16px 18px;
+    overflow-x: auto;
+    overflow-y: auto;
+  }
+
+  .stock-table {
+    min-width: 760px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-bar {
+    display: none;
+  }
+
+  .topbar {
+    justify-content: space-between;
+  }
+
+  .topbar-date {
+    font-size: 12px;
+  }
+
+  .topbar-time {
+    font-size: 11px;
+  }
+
+  .page-title {
+    font-size: 19px;
+  }
+
+  .page-sub {
+    font-size: 12px;
+  }
+
+  .toolbar {
+    align-items: stretch;
+  }
+
+  .toolbar-right {
+    justify-content: stretch;
+  }
+
+  .add-stock-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .modal {
+    width: calc(100vw - 24px);
+    padding: 18px 16px 16px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
 }

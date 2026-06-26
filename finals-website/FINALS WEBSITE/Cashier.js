@@ -361,7 +361,7 @@ function printReceipt() {
     <style>
       @page { size: 58mm auto; margin: 0; }
       body {
-        font-family: 'Courier New', monospace;
+        font-family: 'DM Sans', sans-serif;
         font-size: 10.5px;
         line-height: 1.6;
         width: 58mm;
